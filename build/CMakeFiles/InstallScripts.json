@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/rex/Coding/c/phonebook/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

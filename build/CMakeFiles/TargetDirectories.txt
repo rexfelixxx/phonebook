@@ -1,0 +1,3 @@
+/home/rex/Coding/c/phonebook/build/CMakeFiles/phonebook.dir
+/home/rex/Coding/c/phonebook/build/CMakeFiles/edit_cache.dir
+/home/rex/Coding/c/phonebook/build/CMakeFiles/rebuild_cache.dir
