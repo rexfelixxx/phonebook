@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 typedef struct {
@@ -7,10 +8,11 @@ typedef struct {
 } Contact;
 int contacts_length = 1;
 
-Contact contacts[10];
+Contact *contacts;
 
 void print_menu() {
-  printf("====Phonebook====\n1. Show Contacts\n2. Add Contacts\n3. Exit\nChoose:");
+  printf(
+      "====Phonebook====\n1. Show Contacts\n2. Add Contacts\n3. Exit\nChoose:");
 }
 
 int show_contacts() {
@@ -26,7 +28,14 @@ int show_contacts() {
   return 0;
 }
 
-int add_new_contacts(){
+int add_new_contacts() {
+
+  Contact *temp = realloc(contacts, (contacts_length + 1) * 60);
+  if (!temp)
+    return 1;
+
+  contacts = temp;
+
   char input[50];
   printf("Name: ");
   scanf("%s", &input);
@@ -39,22 +48,23 @@ int add_new_contacts(){
 }
 
 int main() {
+  contacts = (Contact *)calloc(1, 60);
   strcpy(contacts[0].name, "Sadono");
   strcpy(contacts[0].number, "Sadono");
   int c;
-  while(1){
+  while (1) {
     print_menu();
     scanf("%d", &c);
-    switch(c){
-      case 1:
-        show_contacts();
-        break;
-      case 2:
-        add_new_contacts();
-        break;
-      default:
-        printf("Exiting...\n");
-        return 0;
+    switch (c) {
+    case 1:
+      show_contacts();
+      break;
+    case 2:
+      add_new_contacts();
+      break;
+    default:
+      printf("Exiting...\n");
+      return 0;
     }
   }
 }
