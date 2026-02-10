@@ -22,7 +22,7 @@ int show_contacts() {
   }
 
   for (int i = 0; i < contacts_length; i++) {
-    printf("%d | %s | %s\n", i, contacts[i].name, contacts[i].number);
+    printf("%3d \t %s \t %s\n", i, contacts[i].name, contacts[i].number);
   }
 
   return 0;
@@ -39,19 +39,19 @@ int add_new_contacts() {
   char input[50];
   printf("Name: ");
   scanf("%s", &input);
-  strcpy(contacts[contacts_length].name, input);
+  strcpy(contacts[contacts_length + 1].name, input);
   printf("Number: ");
   scanf("%s", &input);
-  strcpy(contacts[contacts_length].number, input);
+  strcpy(contacts[contacts_length + 1].number, input);
   contacts_length++;
   return 0;
 }
 
 int main() {
-  contacts = (Contact *)calloc(1, 60);
-  strcpy(contacts[0].name, "Sadono");
-  strcpy(contacts[0].number, "Sadono");
   int c;
+  contacts = (Contact *) calloc(1, 60);
+  strcpy(contacts[0].name, "NAMA");
+  strcpy(contacts[0].number, "NOMOR");
   while (1) {
     print_menu();
     scanf("%d", &c);
@@ -67,4 +67,6 @@ int main() {
       return 0;
     }
   }
+  free(contacts);
+  contacts = NULL;
 }
