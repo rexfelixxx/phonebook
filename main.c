@@ -4,11 +4,40 @@
 
 typedef struct {
   char name[50];
-  char number[10];
+  char number[20];
 } Contact;
-int contacts_length = 1;
+int contacts_length;
 
 Contact *contacts;
+
+int save_file_is_exist(){
+  FILE *fptr = fopen("save.txt", "r");
+
+  if(fptr == NULL) return 0;
+  return 1;
+}
+
+void write_save(){
+  FILE *fptr = fopen("save.txt", "w");
+  for(int i = 0; i < contacts_length; i++){
+    fprintf(fptr, "%50s %20s", contacts[i].name, contacts[i].number);
+  }
+  fclose(fptr);
+  fptr = fopen("contacts_length", "w");
+  fprintf(fptr, "%d", contacts_length);
+  fclose(fptr);
+}
+
+void load_save(){
+  FILE *fptr = fopen("contacts_length", "r");
+  fscanf(fptr, "%d", &contacts_length);
+  fclose(fptr);
+  fptr = fopen("save.txt", "r");
+  for(int i = 0; i < contacts_length; i++){
+    fscanf(fptr, "%50s %20s", &contacts[i].name, &contacts[i].number);
+  }
+  fclose(fptr);
+}
 
 void print_menu() {
   printf(
@@ -24,13 +53,12 @@ int show_contacts() {
   for (int i = 0; i < contacts_length; i++) {
     printf("%3d \t %s \t %s\n", i, contacts[i].name, contacts[i].number);
   }
-
   return 0;
 }
 
 int add_new_contacts() {
 
-  Contact *temp = realloc(contacts, (contacts_length + 1) * 60);
+  Contact *temp = realloc(contacts, (contacts_length + 1) * sizeof(Contact));
   if (!temp)
     return 1;
 
@@ -39,20 +67,21 @@ int add_new_contacts() {
   char input[50];
   printf("Name: ");
   scanf("%s", &input);
-  strcpy(contacts[contacts_length + 1].name, input);
+  strcpy(contacts[contacts_length].name, input);
   printf("Number: ");
   scanf("%s", &input);
-  strcpy(contacts[contacts_length + 1].number, input);
+  strcpy(contacts[contacts_length].number, input);
   contacts_length++;
   return 0;
 }
 
 int main() {
   int c;
-  contacts = (Contact *) calloc(1, 60);
-  strcpy(contacts[0].name, "NAMA");
-  strcpy(contacts[0].number, "NOMOR");
+  load_save();
+  contacts = (Contact *) calloc(contacts_length, 60);
+  write_save();
   while (1) {
+    load_save();
     print_menu();
     scanf("%d", &c);
     switch (c) {
@@ -61,6 +90,7 @@ int main() {
       break;
     case 2:
       add_new_contacts();
+      write_save();
       break;
     default:
       printf("Exiting...\n");
