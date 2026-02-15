@@ -51,6 +51,10 @@ int load_contacts() {
 }
 
 int delete_contacts(int contact_id) {
+  if(contact_id >= contacts_length || contact_id < 0){
+    printf("it doesnt exist\n");
+    return 1;
+  }
   for (int i = contact_id; i < contacts_length; i++) {
     if (i == (contacts_length - 1))
       break;
