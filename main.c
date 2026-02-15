@@ -10,16 +10,17 @@ int contacts_length;
 
 Contact *contacts;
 
-int save_file_is_exist(){
+int save_file_is_exist() {
   FILE *fptr = fopen("save.txt", "r");
 
-  if(fptr == NULL) return 0;
+  if (fptr == NULL)
+    return 0;
   return 1;
 }
 
-void write_save(){
+void write_save() {
   FILE *fptr = fopen("save.txt", "w");
-  for(int i = 0; i < contacts_length; i++){
+  for (int i = 0; i < contacts_length; i++) {
     fprintf(fptr, "%50s %20s", contacts[i].name, contacts[i].number);
   }
   fclose(fptr);
@@ -28,20 +29,44 @@ void write_save(){
   fclose(fptr);
 }
 
-void load_save(){
+int load_contacts_length() {
   FILE *fptr = fopen("contacts_length", "r");
+  if (fptr == NULL){
+    contacts_length = 0;
+    return 1;
+  }
   fscanf(fptr, "%d", &contacts_length);
   fclose(fptr);
-  fptr = fopen("save.txt", "r");
-  for(int i = 0; i < contacts_length; i++){
-    fscanf(fptr, "%50s %20s", &contacts[i].name, &contacts[i].number);
+  return 0;
+}
+
+int load_contacts() {
+  FILE *fptr = fopen("save.txt", "r");
+  if(fptr == NULL) return 1;
+  for (int i = 0; i < contacts_length; i++) {
+    fscanf(fptr, "%50s %20s", contacts[i].name, contacts[i].number);
   }
   fclose(fptr);
+  return 0;
+}
+
+int delete_contacts(int contact_id) {
+  for (int i = contact_id; i < contacts_length; i++) {
+    if (i == (contacts_length - 1))
+      break;
+    contacts[i] = contacts[i + 1];
+  }
+  contacts_length--;
+  Contact *temp = realloc(contacts, contacts_length * sizeof(Contact));
+  if (temp == NULL)
+    return 1;
+  contacts = temp;
+  return 0;
 }
 
 void print_menu() {
-  printf(
-      "====Phonebook====\n1. Show Contacts\n2. Add Contacts\n3. Exit\nChoose:");
+  printf("====Phonebook====\n1. Show Contacts\n2. Add Contacts\n3. Delete "
+         "Contact\n4. Exit\nChoose:");
 }
 
 int show_contacts() {
@@ -49,7 +74,6 @@ int show_contacts() {
     printf("You have no contacts added");
     return 1;
   }
-
   for (int i = 0; i < contacts_length; i++) {
     printf("%3d \t %s \t %s\n", i, contacts[i].name, contacts[i].number);
   }
@@ -66,10 +90,10 @@ int add_new_contacts() {
 
   char input[50];
   printf("Name: ");
-  scanf("%s", &input);
+  scanf("%s", input);
   strcpy(contacts[contacts_length].name, input);
   printf("Number: ");
-  scanf("%s", &input);
+  scanf("%s", input);
   strcpy(contacts[contacts_length].number, input);
   contacts_length++;
   return 0;
@@ -77,11 +101,11 @@ int add_new_contacts() {
 
 int main() {
   int c;
-  load_save();
-  contacts = (Contact *) calloc(contacts_length, 60);
+  load_contacts_length();
+  contacts = (Contact *)calloc(contacts_length, sizeof(Contact));
+  load_contacts();
   write_save();
   while (1) {
-    load_save();
     print_menu();
     scanf("%d", &c);
     switch (c) {
@@ -90,6 +114,12 @@ int main() {
       break;
     case 2:
       add_new_contacts();
+      write_save();
+      break;
+    case 3:
+      printf("\nContacts ID: ");
+      scanf("%d", &c);
+      delete_contacts(c);
       write_save();
       break;
     default:
